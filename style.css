@@ -66,6 +66,9 @@ body {
 }
 
 .check-mark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -105,4 +108,66 @@ body {
 
 .new-doto-input input::placeholder {
   color: hsl(233, 14%, 35%);
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 70px;
+  background-color: hsl(235, 24%, 19%);
+  border-bottom: 1px solid hsl(237, 14%, 26%);
+  color: hsl(234, 39%, 85%);
+  font-size: 18px;
+  transition: all 0.25s ease;
+}
+
+.todo-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0px 7px 0px hsl(235, 21%, 11%);
+  border-color: hsl(235, 24%, 19%);
+}
+
+.todo-text {
+  display: flex;
+  align-items: center;
+}
+
+.todo-items-wrapper {
+  margin-top: 30px;
+  background-color: hsl(235, 24%, 19%);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.4);
+}
+
+.todo-items-info {
+  height: 70px;
+  width: 100%;
+  color: hsl(233, 14%, 35%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+  align-items: center;
+}
+
+.items-statuses {
+  display: flex;
+  justify-content: center;
+}
+
+.items-statuses span {
+  padding: 0 4px;
+  cursor: pointer;
+}
+
+.items-statuses span:hover,
+.items-statuses span.active,
+.items-clear:hover {
+  color: hsl(220, 98%, 61%);
+}
+
+.items-clear {
+  cursor: pointer;
+  text-align: end;
 }
