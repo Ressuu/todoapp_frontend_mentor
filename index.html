@@ -10,9 +10,8 @@
       sizes="32x32"
       href="./images/favicon-32x32.png"
     />
-    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore-compat.js"></script>
     <title>Frontend Mentor | Todo app</title>
+    <script src="firebase.js" type="module"></script>
   </head>
   <body>
     <div class="background">
@@ -30,7 +29,7 @@
           <div class="check-mark"></div>
         </div>
         <div class="new-doto-input">
-          <form onsubmit="addItem(event)">
+          <form onsubmit="addItem(); return false;">
             <input
               id="todo-input"
               type="text"
@@ -79,6 +78,5 @@
         </div>
       </div>
     </div>
-    <script src="/script.js"></script>
   </body>
 </html>
