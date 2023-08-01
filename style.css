@@ -65,6 +65,10 @@ body {
   align-items: center;
 }
 
+.check-mark img {
+  visibility: hidden;
+}
+
 .check-mark {
   display: flex;
   justify-content: center;
@@ -77,8 +81,19 @@ body {
   transition: all 0.25s;
 }
 
-.check-mark:hover {
+.check-mark:hover,
+.check-mark.checked {
   background: linear-gradient(135deg, #55ddff 0%, #c058f3 100%);
+}
+
+.check-mark:hover img,
+.check-mark.checked img {
+  visibility: visible;
+}
+
+.checked {
+  text-decoration: line-through;
+  color: hsl(223, 14%, 35%);
 }
 
 .new-doto-input {
