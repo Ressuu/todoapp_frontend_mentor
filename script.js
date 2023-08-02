@@ -157,11 +157,11 @@ function todoTasksCompleted(count) {
   const taskNumberElement = document.querySelector(".task_number");
 
   if (count === 0) {
-    taskNumberElement.innerHTML = "You don't have completed task";
+    taskNumberElement.innerHTML = "You don't have completed task's";
   } else if (count === 1) {
     taskNumberElement.innerHTML = "You have completed 1 task";
   } else {
-    taskNumberElement.innerHTML = `You completed ${count} tasks`;
+    taskNumberElement.innerHTML = `You completed ${count} task's`;
   }
 }
 
