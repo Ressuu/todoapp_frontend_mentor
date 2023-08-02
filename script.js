@@ -11,6 +11,8 @@ import {
   updateDoc,
   addDoc,
   onSnapshot,
+  query,
+  where,
 } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -26,10 +28,14 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 //koniec firebase
-
+const allTasks = document.querySelector(".all_tasks");
+const todoCollectionRef = collection(db, "To-do");
+const activeTasks = document.querySelector(".active_tasks");
+const itemsStatuses = document.querySelector(".items-statuses");
+const spans = itemsStatuses.querySelectorAll("span");
 let items = [];
 let text = document.getElementById("todo-input");
-const todoCollectionRef = collection(db, "To-do");
+let number = document.querySelector(".task_number");
 
 function addItem(event) {
   event.preventDefault();
@@ -115,7 +121,134 @@ function listenToTodoChanges() {
   });
 }
 
+async function getTodoTask() {
+  const querySnapshot = getDocs(todoCollectionRef);
+  const numberOfDocuments = querySnapshot.size;
+  return numberOfDocuments;
+}
+
+async function todoTaskNumber() {
+  const querySnapshot = getDocs(todoCollectionRef);
+  const numberOfDocuments = querySnapshot.size;
+  return numberOfDocuments;
+}
+
+function todoTasksNumber(count) {
+  number.innerHTML = count;
+}
+
+function refreshTaskNumber() {
+  onSnapshot(todoCollectionRef, (querySnapshot) => {
+    const numberOfTasks = querySnapshot.size;
+    todoTasksNumber(numberOfTasks);
+  });
+}
+
+// Pobranie z bazy danych status active
+
+async function getActiveItemsFromFirebase() {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, "To-do"), where("status", "==", "active"))
+    );
+
+    const activeItems = [];
+    querySnapshot.forEach((doc) => {
+      activeItems.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    return activeItems;
+  } catch (error) {
+    console.error(querySnapshot);
+  }
+}
+
+// KONIEC
+
+// Pobranie z bazy danych status all
+
+async function getAllItemsFromFirebase() {
+  try {
+    const activeQuerySnapshot = await getDocs(
+      query(collection(db, "To-do"), where("status", "==", "active"))
+    );
+
+    const completedQuerySnapshot = await getDocs(
+      query(collection(db, "To-do"), where("status", "==", "completed"))
+    );
+
+    const activeItems = activeQuerySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    const completedItems = completedQuerySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    const allItems = [...activeItems, ...completedItems];
+    return allItems;
+  } catch (error) {
+    console.error("Błąd podczas pobierania danych z Firebase:", error);
+    return [];
+  }
+}
+
+allTasks.addEventListener("click", async () => {
+  const allItems = await getAllItemsFromFirebase();
+  generateItems(allItems);
+  number.innerHTML = allItems.length;
+});
+
+//Koniec
+
+//Pobranie z bazy danych status completed
+
+async function getCompletedItemsFromFirebase() {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, "To-do"), where("status", "==", "Completed"))
+    );
+
+    const activeItems = [];
+    querySnapshot.forEach((doc) => {
+      activeItems.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    return activeItems;
+  } catch (error) {
+    console.error(querySnapshot);
+  }
+}
+
+//koniec
+
+// Przekazywanie classy active pomiedzy All, Active i Completed
+
+spans.forEach((span) => {
+  span.addEventListener("click", function () {
+    spans.forEach((s) => s.classList.remove("active"));
+    span.classList.add("active");
+  });
+});
+
+// KONIEC
+
+activeTasks.addEventListener("click", async () => {
+  const activeItems = await getActiveItemsFromFirebase();
+  generateItems(activeItems);
+  number.innerHTML = activeItems.length;
+});
+
 listenToTodoChanges();
+refreshTaskNumber();
 
 getItems().then((items) => {
   generateItems(items);
