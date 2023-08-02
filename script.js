@@ -12,6 +12,7 @@ import {
   addDoc,
   onSnapshot,
   query,
+  writeBatch,
   where,
 } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
@@ -28,6 +29,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 //koniec firebase
+const clearCompleted = document.querySelector(".clear_completed");
+const completedTask = document.querySelector(".Completed_tasks");
 const allTasks = document.querySelector(".all_tasks");
 const todoCollectionRef = collection(db, "To-do");
 const activeTasks = document.querySelector(".active_tasks");
@@ -133,9 +136,36 @@ async function todoTaskNumber() {
   return numberOfDocuments;
 }
 
+//funkcja ktory updatuje all i active text
+
 function todoTasksNumber(count) {
-  number.innerHTML = count;
+  const taskNumberElement = document.querySelector(".task_number");
+
+  if (count === 0) {
+    taskNumberElement.innerHTML = "You have nothing to do";
+  } else if (count === 1) {
+    taskNumberElement.innerHTML = "You have 1 task";
+  } else {
+    taskNumberElement.innerHTML = `You have ${count} tasks`;
+  }
 }
+//koniec
+
+// funkcja do wyświetlania ilości zadań zakończonych
+
+function todoTasksCompleted(count) {
+  const taskNumberElement = document.querySelector(".task_number");
+
+  if (count === 0) {
+    taskNumberElement.innerHTML = "You don't have completed task";
+  } else if (count === 1) {
+    taskNumberElement.innerHTML = "You have completed 1 task";
+  } else {
+    taskNumberElement.innerHTML = `You completed ${count} tasks`;
+  }
+}
+
+//koniec
 
 function refreshTaskNumber() {
   onSnapshot(todoCollectionRef, (querySnapshot) => {
@@ -165,6 +195,12 @@ async function getActiveItemsFromFirebase() {
     console.error(querySnapshot);
   }
 }
+
+activeTasks.addEventListener("click", async () => {
+  const activeItems = await getActiveItemsFromFirebase();
+  generateItems(activeItems);
+  todoTasksCompleted(activeItems.length);
+});
 
 // KONIEC
 
@@ -201,7 +237,7 @@ async function getAllItemsFromFirebase() {
 allTasks.addEventListener("click", async () => {
   const allItems = await getAllItemsFromFirebase();
   generateItems(allItems);
-  number.innerHTML = allItems.length;
+  todoTasksCompleted(allItems.length);
 });
 
 //Koniec
@@ -211,7 +247,7 @@ allTasks.addEventListener("click", async () => {
 async function getCompletedItemsFromFirebase() {
   try {
     const querySnapshot = await getDocs(
-      query(collection(db, "To-do"), where("status", "==", "Completed"))
+      query(collection(db, "To-do"), where("status", "==", "completed"))
     );
 
     const activeItems = [];
@@ -228,6 +264,12 @@ async function getCompletedItemsFromFirebase() {
   }
 }
 
+completedTask.addEventListener("click", async () => {
+  const completedItems = await getCompletedItemsFromFirebase();
+  generateItems(completedItems);
+  todoTasksCompleted(completedItems.length);
+});
+
 //koniec
 
 // Przekazywanie classy active pomiedzy All, Active i Completed
@@ -241,10 +283,36 @@ spans.forEach((span) => {
 
 // KONIEC
 
-activeTasks.addEventListener("click", async () => {
-  const activeItems = await getActiveItemsFromFirebase();
-  generateItems(activeItems);
-  number.innerHTML = activeItems.length;
+// Usuwanie wszystkich zadań z statusu completed z bazy danych
+
+async function deleteCompletedItemsFromFirebase() {
+  const answer = prompt(
+    "Do you wanna delete all completed tasks? Type 'yes' to delete it "
+  );
+  if (answer === "yes") {
+    try {
+      const completedQuerySnapshot = await getDocs(
+        query(collection(db, "To-do"), where("status", "==", "completed"))
+      );
+
+      const batch = writeBatch(db);
+      completedQuerySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      await batch.commit();
+      console.log("Usunięto dokumenty ze statusem 'completed' z Firebase.");
+    } catch (error) {
+      console.error("Błąd podczas usuwania dokumentów:", error);
+    }
+  }
+}
+
+//koniec
+
+clearCompleted.addEventListener("click", async () => {
+  await deleteCompletedItemsFromFirebase();
+  const allItems = await getAllItemsFromFirebase();
 });
 
 listenToTodoChanges();
