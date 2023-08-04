@@ -40,6 +40,7 @@ const backgroundButton = document.querySelector(".background-btn");
 let items = [];
 let text = document.getElementById("todo-input");
 let number = document.querySelector(".task_number");
+let bodyElement = document.body;
 
 function addItem(event) {
   event.preventDefault();
@@ -74,10 +75,14 @@ function generateItems(items) {
   let itemsHTML = "";
   items.forEach((item) => {
     itemsHTML += `
-      <div class="todo-item">
+    <div class="todo-item ${
+      bodyElement.classList.contains("body-light") ? "todo-item-light" : ""
+    }">
         <div class="check">
           <div data-id="${item.id}" class="check-mark ${
       item.status == "completed" ? "checked" : ""
+    } ${
+      bodyElement.classList.contains("body-light") ? "check-mark-light" : ""
     }">
             <img src="/images/icon-check.svg" alt="" />
           </div>
@@ -326,6 +331,15 @@ backgroundButton.addEventListener("click", () => {
   let todoitem = document.querySelector(".todo-item");
   let newDoToInput = document.querySelector(".new-doto-input");
   let toDoItemsWrapper = document.querySelector(".todo-items-wrapper");
+  let background = document.querySelector(".backgroundIMG");
+  let isBackgroundChanged = false;
+
+  if (!isBackgroundChanged) {
+    background.src = "./images/bg-desktop-light.jpg";
+  } else {
+    background.src = "./images/bg-desktop-dark.jpg";
+  }
+  isBackgroundChanged = !isBackgroundChanged;
 
   toDoItemsWrapper.classList.toggle("todo-items-wrapper-light");
   newDoToInput.classList.toggle("new-doto-input-light");
