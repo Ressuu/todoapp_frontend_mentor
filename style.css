@@ -182,7 +182,135 @@ body {
   color: hsl(220, 98%, 61%);
 }
 
+.background-btn {
+  cursor: pointer;
+}
+
 .items-clear {
   cursor: pointer;
   text-align: end;
+}
+
+/* JASNY MOTYW  */
+
+/* done */
+.title-light {
+  color: #333;
+  font-size: 50px;
+  font-weight: bold;
+  letter-spacing: 10px;
+}
+/* done */
+.body-light {
+  font-family: "Josefin Sans", sans-serif;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  background-color: #f2f2f2;
+}
+
+/* done */
+.new-todo-light {
+  background-color: #f0f0f0;
+  height: 70px;
+  margin-top: 50px;
+  border-radius: 6px;
+  display: flex;
+}
+
+/* done */
+.check-mark-light {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.check-mark-light:hover,
+.check-mark-light.checked-light {
+  background: linear-gradient(135deg, #55ddff 0%, #c058f3 100%);
+  border-color: transparent;
+}
+
+.checked-light {
+  text-decoration: line-through;
+  color: #999;
+}
+
+/* done */
+.todo-item-light {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 70px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  color: #333;
+  font-size: 18px;
+  transition: all 0.25s ease;
+}
+
+/* done */
+.todo-item-light:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0px 7px 0px #ddd;
+  border-color: #ddd;
+}
+
+.new-doto-input-light {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.new-doto-input-light form {
+  flex-grow: 1;
+}
+
+.new-doto-input-light input {
+  width: 100%;
+  padding: 10px 0px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: #333;
+  font-family: Josefin Sans;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.25px;
+}
+
+.new-doto-input-light input::placeholder {
+  color: #999; /* Kolor placeholdera */
+}
+
+.todo-items-wrapper-light {
+  margin-top: 30px;
+  background-color: #f2f2f2; /* Kolor tła kontenera todo */
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.4);
+}
+
+.todo-items-info-light {
+  height: 70px;
+  width: 100%;
+  color: #999; /* Kolor tekstu w kontenerze todo */
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+  align-items: center;
+}
+
+.items-statuses-light span:hover,
+.items-statuses-light span.active,
+.items-clear:hover {
+  color: #6c63ff; /* Kolor aktywnego stanu elementów */
 }

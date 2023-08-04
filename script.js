@@ -36,6 +36,7 @@ const todoCollectionRef = collection(db, "To-do");
 const activeTasks = document.querySelector(".active_tasks");
 const itemsStatuses = document.querySelector(".items-statuses");
 const spans = itemsStatuses.querySelectorAll("span");
+const backgroundButton = document.querySelector(".background-btn");
 let items = [];
 let text = document.getElementById("todo-input");
 let number = document.querySelector(".task_number");
@@ -48,6 +49,7 @@ function addItem(event) {
   });
   console.log("Document written with ID: ", docRef.id);
   text.value = "";
+  createEventListeners();
 }
 
 text.addEventListener("keypress", function (e) {
@@ -193,13 +195,14 @@ async function getActiveItemsFromFirebase() {
     return activeItems;
   } catch (error) {
     console.error(querySnapshot);
+    return [];
   }
 }
 
 activeTasks.addEventListener("click", async () => {
   const activeItems = await getActiveItemsFromFirebase();
   generateItems(activeItems);
-  todoTasksCompleted(activeItems.length);
+  todoTasksNumber(activeItems.length);
 });
 
 // KONIEC
@@ -237,7 +240,7 @@ async function getAllItemsFromFirebase() {
 allTasks.addEventListener("click", async () => {
   const allItems = await getAllItemsFromFirebase();
   generateItems(allItems);
-  todoTasksCompleted(allItems.length);
+  todoTasksNumber(allItems.length);
 });
 
 //Koniec
@@ -313,6 +316,24 @@ async function deleteCompletedItemsFromFirebase() {
 clearCompleted.addEventListener("click", async () => {
   await deleteCompletedItemsFromFirebase();
   const allItems = await getAllItemsFromFirebase();
+});
+
+backgroundButton.addEventListener("click", () => {
+  let title = document.querySelector(".title");
+  let bodyElement = document.body;
+  let newToDo = document.querySelector(".new-todo");
+  let checkMark = document.querySelector(".check-mark");
+  let todoitem = document.querySelector(".todo-item");
+  let newDoToInput = document.querySelector(".new-doto-input");
+  let toDoItemsWrapper = document.querySelector(".todo-items-wrapper");
+
+  toDoItemsWrapper.classList.toggle("todo-items-wrapper-light");
+  newDoToInput.classList.toggle("new-doto-input-light");
+  todoitem.classList.toggle("todo-item-light");
+  checkMark.classList.toggle("check-mark-light");
+  newToDo.classList.toggle("new-todo-light");
+  bodyElement.classList.toggle("body-light");
+  title.classList.toggle("title-light");
 });
 
 listenToTodoChanges();
