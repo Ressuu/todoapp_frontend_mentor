@@ -41,6 +41,7 @@ let items = [];
 let text = document.getElementById("todo-input");
 let number = document.querySelector(".task_number");
 let bodyElement = document.body;
+let isBackgroundChanged = false;
 
 function addItem(event) {
   event.preventDefault();
@@ -332,13 +333,13 @@ backgroundButton.addEventListener("click", () => {
   let newDoToInput = document.querySelector(".new-doto-input");
   let toDoItemsWrapper = document.querySelector(".todo-items-wrapper");
   let background = document.querySelector(".backgroundIMG");
-  let isBackgroundChanged = false;
 
   if (!isBackgroundChanged) {
     background.src = "./images/bg-desktop-light.jpg";
   } else {
     background.src = "./images/bg-desktop-dark.jpg";
   }
+
   isBackgroundChanged = !isBackgroundChanged;
 
   toDoItemsWrapper.classList.toggle("todo-items-wrapper-light");
