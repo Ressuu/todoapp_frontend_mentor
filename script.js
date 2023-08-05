@@ -45,6 +45,10 @@ let isBackgroundChanged = false;
 
 function addItem(event) {
   event.preventDefault();
+  if (text.value === "") {
+    return;
+  }
+
   const docRef = addDoc(collection(db, "To-do"), {
     text: text.value,
     status: "active",
