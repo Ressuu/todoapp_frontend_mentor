@@ -75,16 +75,22 @@ async function getItems() {
 function generateItems(items) {
   let itemsHTML = "";
   items.forEach((item) => {
-    itemsHTML += `
-    <div class="todo-item ${
-      bodyElement.classList.contains("body-light") ? "todo-item-light" : ""
-    }">
+    // Sprawdź, czy wybrana kategoria to "All" lub status zadania odpowiada wybranej kategorii.
+    if (
+      itemsStatuses.querySelector(".active").textContent === "All" ||
+      item.status ===
+        itemsStatuses.querySelector(".active").textContent.toLowerCase()
+    ) {
+      itemsHTML += `
+      <div class="todo-item ${
+        bodyElement.classList.contains("body-light") ? "todo-item-light" : ""
+      }">
         <div class="check">
           <div data-id="${item.id}" class="check-mark ${
-      item.status == "completed" ? "checked" : ""
-    } ${
-      bodyElement.classList.contains("body-light") ? "check-mark-light" : ""
-    }">
+        item.status == "completed" ? "checked" : ""
+      } ${
+        bodyElement.classList.contains("body-light") ? "check-mark-light" : ""
+      }">
             <img src="/images/icon-check.svg" alt="" />
           </div>
         </div>
@@ -92,7 +98,8 @@ function generateItems(items) {
           ${item.text}
         </div>
       </div>   
-    `;
+      `;
+    }
   });
 
   document.querySelector(".todo-items").innerHTML = itemsHTML;
@@ -200,16 +207,10 @@ async function getActiveItemsFromFirebase() {
 
     return activeItems;
   } catch (error) {
-    console.error(querySnapshot);
+    console.error("Error fetching active items:", error);
     return [];
   }
 }
-
-activeTasks.addEventListener("click", async () => {
-  const activeItems = await getActiveItemsFromFirebase();
-  generateItems(activeItems);
-  todoTasksNumber(activeItems.length);
-});
 
 // KONIEC
 
@@ -238,7 +239,7 @@ async function getAllItemsFromFirebase() {
     const allItems = [...activeItems, ...completedItems];
     return allItems;
   } catch (error) {
-    console.error("Błąd podczas pobierania danych z Firebase:", error);
+    console.error("Error fetching all items:", error);
     return [];
   }
 }
@@ -259,25 +260,20 @@ async function getCompletedItemsFromFirebase() {
       query(collection(db, "To-do"), where("status", "==", "completed"))
     );
 
-    const activeItems = [];
+    const completedItems = [];
     querySnapshot.forEach((doc) => {
-      activeItems.push({
+      completedItems.push({
         id: doc.id,
         ...doc.data(),
       });
     });
 
-    return activeItems;
+    return completedItems;
   } catch (error) {
-    console.error(querySnapshot);
+    console.error("Error fetching completed items:", error);
+    return [];
   }
 }
-
-completedTask.addEventListener("click", async () => {
-  const completedItems = await getCompletedItemsFromFirebase();
-  generateItems(completedItems);
-  todoTasksCompleted(completedItems.length);
-});
 
 //koniec
 
@@ -287,6 +283,17 @@ spans.forEach((span) => {
   span.addEventListener("click", function () {
     spans.forEach((s) => s.classList.remove("active"));
     span.classList.add("active");
+
+    const activeCategory = itemsStatuses
+      .querySelector(".active")
+      .textContent.toLowerCase();
+    if (activeCategory === "all") {
+      getAllItemsFromFirebase().then((items) => generateItems(items));
+    } else if (activeCategory === "active") {
+      getActiveItemsFromFirebase().then((items) => generateItems(items));
+    } else if (activeCategory === "completed") {
+      getCompletedItemsFromFirebase().then((items) => generateItems(items));
+    }
   });
 });
 
@@ -319,6 +326,18 @@ async function deleteCompletedItemsFromFirebase() {
 
 //koniec
 
+completedTask.addEventListener("click", async () => {
+  const completedItems = await getCompletedItemsFromFirebase();
+  generateItems(completedItems);
+  todoTasksCompleted(completedItems.length);
+});
+
+activeTasks.addEventListener("click", async () => {
+  const activeItems = await getActiveItemsFromFirebase();
+  generateItems(activeItems);
+  todoTasksNumber(activeItems.length);
+});
+
 clearCompleted.addEventListener("click", async () => {
   await deleteCompletedItemsFromFirebase();
   const allItems = await getAllItemsFromFirebase();
@@ -333,19 +352,32 @@ backgroundButton.addEventListener("click", () => {
   let newDoToInput = document.querySelector(".new-doto-input");
   let toDoItemsWrapper = document.querySelector(".todo-items-wrapper");
   let background = document.querySelector(".backgroundIMG");
+  let sunBtn = document.querySelector(".sun-btn");
+
+  if (isBackgroundChanged) {
+    backgroundButton.src = "./images/icon-sun.svg";
+  } else {
+    backgroundButton.src = "./images/icon-moon.svg";
+  }
 
   if (!isBackgroundChanged) {
     background.src = "./images/bg-desktop-light.jpg";
   } else {
     background.src = "./images/bg-desktop-dark.jpg";
   }
-
   isBackgroundChanged = !isBackgroundChanged;
+
+  if (todoitem) {
+    todoitem.classList.toggle("todo-item-light");
+  }
 
   toDoItemsWrapper.classList.toggle("todo-items-wrapper-light");
   newDoToInput.classList.toggle("new-doto-input-light");
-  todoitem.classList.toggle("todo-item-light");
-  checkMark.classList.toggle("check-mark-light");
+
+  if (checkMark) {
+    checkMark.classList.toggle("check-mark-light");
+  }
+
   newToDo.classList.toggle("new-todo-light");
   bodyElement.classList.toggle("body-light");
   title.classList.toggle("title-light");
