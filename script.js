@@ -357,6 +357,7 @@ backgroundButton.addEventListener("click", () => {
   let toDoItemsWrapper = document.querySelector(".todo-items-wrapper");
   let background = document.querySelector(".backgroundIMG");
   let sunBtn = document.querySelector(".sun-btn");
+  const todoItems = document.querySelectorAll(".todo-item");
 
   if (isBackgroundChanged) {
     backgroundButton.src = "./images/icon-sun.svg";
@@ -371,9 +372,9 @@ backgroundButton.addEventListener("click", () => {
   }
   isBackgroundChanged = !isBackgroundChanged;
 
-  if (todoitem) {
+  todoItems.forEach((todoitem) => {
     todoitem.classList.toggle("todo-item-light");
-  }
+  });
 
   toDoItemsWrapper.classList.toggle("todo-items-wrapper-light");
   newDoToInput.classList.toggle("new-doto-input-light");
