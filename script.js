@@ -79,7 +79,6 @@ async function getItems() {
 function generateItems(items) {
   let itemsHTML = "";
   items.forEach((item) => {
-    // Sprawdź, czy wybrana kategoria to "All" lub status zadania odpowiada wybranej kategorii.
     if (
       itemsStatuses.querySelector(".active").textContent === "All" ||
       item.status ===
